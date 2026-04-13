@@ -1,0 +1,29 @@
+{
+  "project_info": {
+    "project_number": "1015843454532",
+    "project_id": "superchat-786cb",
+    "storage_bucket": "superchat-786cb.firebasestorage.app"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:1015843454532:android:6ec71344f8c292ee208611",
+        "android_client_info": {
+          "package_name": "com.example.superchat"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyA7aAO87j6sJKxkgAyeX7_-fN7n2ducrSQ"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
