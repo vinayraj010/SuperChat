@@ -13,7 +13,7 @@ class UserListTile extends StatelessWidget {
   final VoidCallback onBlock;
 
   const UserListTile({
-    super.key,
+    Key? key,
     required this.user,
     required this.isFriend,
     required this.isRequestSent,
@@ -23,33 +23,58 @@ class UserListTile extends StatelessWidget {
     required this.onRejectRequest,
     required this.onCancelRequest,
     required this.onBlock,
-  });
+  }) : super(key: key);
 
   @override
   Widget build(BuildContext context) {
-    return ListTile(
-      leading: CircleAvatar(child: Text(user.name[0].toUpperCase())),
-      title: Text(user.name),
-      subtitle: Text(user.email),
-      trailing: _buildActionButton(),
+    return Card(
+      margin: const EdgeInsets.symmetric(horizontal: 16, vertical: 4),
+      elevation: 2,
+      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
+      child: ListTile(
+        leading: CircleAvatar(
+          radius: 25,
+          child: Text(
+            user.name[0].toUpperCase(),
+            style: const TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
+          ),
+          backgroundColor: Colors.blue[100],
+        ),
+        title: Text(
+          user.name,
+          style: const TextStyle(fontWeight: FontWeight.bold, fontSize: 16),
+        ),
+        subtitle: Text(user.email, style: const TextStyle(fontSize: 12)),
+        trailing: _buildActionButton(),
+      ),
     );
   }
 
   Widget _buildActionButton() {
     if (isFriend) {
-      return Icon(Icons.check_circle, color: Colors.green);
+      return Container(
+        padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
+        decoration: BoxDecoration(
+          color: Colors.green[100],
+          borderRadius: BorderRadius.circular(20),
+        ),
+        child: const Text(
+          'Friend',
+          style: TextStyle(color: Colors.green, fontWeight: FontWeight.bold),
+        ),
+      );
     }
 
     if (isRequestSent) {
-      return Row(
-        mainAxisSize: MainAxisSize.min,
-        children: [
-          IconButton(
-            icon: Icon(Icons.cancel, color: Colors.red),
-            onPressed: onCancelRequest,
-            tooltip: 'Cancel Request',
+      return TextButton(
+        onPressed: onCancelRequest,
+        style: TextButton.styleFrom(
+          backgroundColor: Colors.red[50],
+          shape: RoundedRectangleBorder(
+            borderRadius: BorderRadius.circular(20),
           ),
-        ],
+        ),
+        child: const Text('Cancel', style: TextStyle(color: Colors.red)),
       );
     }
 
@@ -57,15 +82,26 @@ class UserListTile extends StatelessWidget {
       return Row(
         mainAxisSize: MainAxisSize.min,
         children: [
-          IconButton(
-            icon: Icon(Icons.check, color: Colors.green),
+          TextButton(
             onPressed: onAcceptRequest,
-            tooltip: 'Accept',
+            style: TextButton.styleFrom(
+              backgroundColor: Colors.green[50],
+              shape: RoundedRectangleBorder(
+                borderRadius: BorderRadius.circular(20),
+              ),
+            ),
+            child: const Text('Accept', style: TextStyle(color: Colors.green)),
           ),
-          IconButton(
-            icon: Icon(Icons.close, color: Colors.red),
+          const SizedBox(width: 8),
+          TextButton(
             onPressed: onRejectRequest,
-            tooltip: 'Reject',
+            style: TextButton.styleFrom(
+              backgroundColor: Colors.red[50],
+              shape: RoundedRectangleBorder(
+                borderRadius: BorderRadius.circular(20),
+              ),
+            ),
+            child: const Text('Reject', style: TextStyle(color: Colors.red)),
           ),
         ],
       );
@@ -74,15 +110,21 @@ class UserListTile extends StatelessWidget {
     return Row(
       mainAxisSize: MainAxisSize.min,
       children: [
-        IconButton(
-          icon: Icon(Icons.person_add, color: Colors.blue),
+        TextButton(
           onPressed: onSendRequest,
-          tooltip: 'Send Request',
+          style: TextButton.styleFrom(
+            backgroundColor: Colors.blue[50],
+            shape: RoundedRectangleBorder(
+              borderRadius: BorderRadius.circular(20),
+            ),
+          ),
+          child: const Text('Add Friend', style: TextStyle(color: Colors.blue)),
         ),
+        const SizedBox(width: 8),
         IconButton(
-          icon: Icon(Icons.block, color: Colors.red),
+          icon: const Icon(Icons.block, color: Colors.red),
           onPressed: onBlock,
-          tooltip: 'Block',
+          tooltip: 'Block User',
         ),
       ],
     );

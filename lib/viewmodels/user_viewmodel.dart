@@ -6,9 +6,9 @@ class UserViewModel extends ChangeNotifier {
   final FirebaseService _firebaseService = FirebaseService();
   AppUser? _currentUser;
   List<AppUser> _allUsers = [];
-  final List<AppUser> _friends = [];
+  List<AppUser> _friends = [];
   List<AppUser> _blockedUsers = [];
-  final bool _isLoading = false;
+  bool _isLoading = false;
 
   AppUser? get currentUser => _currentUser;
   List<AppUser> get allUsers => _allUsers;
@@ -17,50 +17,46 @@ class UserViewModel extends ChangeNotifier {
   bool get isLoading => _isLoading;
 
   void init(String uid) {
-    _listenToUserChanges(uid);
+    _listenToCurrentUser(uid);
+    _listenToAllUsers(uid);
   }
 
-  void _listenToUserChanges(String uid) {
+  void _listenToCurrentUser(String uid) {
     _firebaseService.getUserStream(uid).listen((user) {
       if (user != null) {
         _currentUser = user;
-        _loadAllUsers();
-        _loadFriends();
-        _loadBlockedUsers();
+        _updateFriendsList();
+        _updateBlockedList();
         notifyListeners();
       }
     });
   }
 
-  Future<void> _loadAllUsers() async {
-    if (_currentUser == null) return;
-
-    _firebaseService
-        .getAllUsers(_currentUser!.uid, _currentUser!.blockedBy)
-        .listen((users) {
-          _allUsers = users;
-          notifyListeners();
-        });
-  }
-
-  Future<void> _loadFriends() async {
-    if (_currentUser == null) return;
-
-    _allUsers = _allUsers
-        .where((user) => _currentUser!.friends.contains(user.uid))
-        .toList();
-    notifyListeners();
-  }
-
-  Future<void> _loadBlockedUsers() async {
-    if (_currentUser == null) return;
-
-    _firebaseService.getAllUsers(_currentUser!.uid, []).listen((users) {
-      _blockedUsers = users
-          .where((user) => _currentUser!.blockedUsers.contains(user.uid))
-          .toList();
+  void _listenToAllUsers(String uid) {
+    _firebaseService.getAllUsers(uid, []).listen((users) {
+      _allUsers = users.where((user) => user.uid != uid).toList();
+      _updateFriendsList();
+      _updateBlockedList();
       notifyListeners();
     });
+  }
+
+  void _updateFriendsList() {
+    if (_currentUser == null) return;
+    _friends = _allUsers
+        .where(
+          (user) =>
+              _currentUser!.friends.contains(user.uid) &&
+              !_currentUser!.blockedUsers.contains(user.uid),
+        )
+        .toList();
+  }
+
+  void _updateBlockedList() {
+    if (_currentUser == null) return;
+    _blockedUsers = _allUsers
+        .where((user) => _currentUser!.blockedUsers.contains(user.uid))
+        .toList();
   }
 
   Future<void> sendFriendRequest(String toUid) async {

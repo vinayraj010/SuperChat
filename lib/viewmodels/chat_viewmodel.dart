@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'dart:io';
 import 'package:firebase_storage/firebase_storage.dart';
 import '../models/message_model.dart';
+import '../models/chat_model.dart';
 import '../services/firebase_service.dart';
 import '../services/audio_recorder_service.dart';
 
@@ -18,6 +19,10 @@ class ChatViewModel extends ChangeNotifier {
   bool get isLoading => _isLoading;
   bool get isRecording => _isRecording;
   Duration get recordingDuration => _recordingDuration;
+
+  Stream<List<UserChat>> getUserChats(String userId) {
+    return _firebaseService.getUserChats(userId);
+  }
 
   void loadMessages(String chatId) {
     _isLoading = true;
@@ -43,7 +48,6 @@ class ChatViewModel extends ChangeNotifier {
       text: text,
       timestamp: DateTime.now(),
     );
-
     await _firebaseService.sendMessage(message);
   }
 
@@ -59,7 +63,6 @@ class ChatViewModel extends ChangeNotifier {
 
     await _audioRecorder.startRecording();
 
-    // Update duration
     Future.doWhile(() async {
       await Future.delayed(Duration(milliseconds: 100));
       if (_isRecording) {
@@ -87,23 +90,24 @@ class ChatViewModel extends ChangeNotifier {
     notifyListeners();
   }
 
+  Future<void> markMessagesAsRead(String chatId, String userId) async {
+    await _firebaseService.markMessagesAsRead(chatId, userId);
+  }
+
   Future<void> _uploadAndSendAudio(
     String chatId,
     String senderId,
     File audioFile,
   ) async {
     try {
-      // Upload to Firebase Storage
       String fileName = 'audio/${DateTime.now().millisecondsSinceEpoch}.m4a';
       Reference storageRef = FirebaseStorage.instance.ref().child(fileName);
       UploadTask uploadTask = storageRef.putFile(audioFile);
       TaskSnapshot snapshot = await uploadTask;
       String downloadUrl = await snapshot.ref.getDownloadURL();
 
-      // Get duration
       Duration duration = await _audioRecorder.getRecordingDuration(audioFile);
 
-      // Send message
       Message message = Message(
         id: '',
         chatId: chatId,

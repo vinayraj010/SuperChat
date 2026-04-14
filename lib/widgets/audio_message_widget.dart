@@ -8,12 +8,12 @@ class AudioMessageWidget extends StatefulWidget {
   final Duration duration;
 
   const AudioMessageWidget({
-    super.key,
+    Key? key,
     required this.audioUrl,
     required this.messageId,
     required this.isMe,
     required this.duration,
-  });
+  }) : super(key: key);
 
   @override
   _AudioMessageWidgetState createState() => _AudioMessageWidgetState();
@@ -32,17 +32,11 @@ class _AudioMessageWidgetState extends State<AudioMessageWidget> {
 
   void _initPlayer() {
     _player.onPlayerStateChanged.listen((state) {
-      setState(() {
-        _isPlaying = state == PlayerState.playing;
-      });
+      setState(() => _isPlaying = state == PlayerState.playing);
     });
-
     _player.onPositionChanged.listen((position) {
-      setState(() {
-        _currentPosition = position;
-      });
+      setState(() => _currentPosition = position);
     });
-
     _player.onPlayerComplete.listen((event) {
       setState(() {
         _isPlaying = false;
@@ -74,7 +68,6 @@ class _AudioMessageWidgetState extends State<AudioMessageWidget> {
   Widget build(BuildContext context) {
     final progress =
         _currentPosition.inMilliseconds / widget.duration.inMilliseconds;
-
     return GestureDetector(
       onTap: _playAudio,
       child: Container(
@@ -92,7 +85,7 @@ class _AudioMessageWidgetState extends State<AudioMessageWidget> {
               size: 32,
             ),
             SizedBox(width: 8),
-            SizedBox(
+            Container(
               width: 150,
               child: Column(
                 children: [

@@ -5,11 +5,11 @@ class AppUser {
   final String email;
   final String name;
   final DateTime createdAt;
-  final List<String> friends; // Accepted friend UIDs
-  final List<String> pendingRequests; // Sent requests
-  final List<String> receivedRequests; // Received requests
-  final List<String> blockedUsers; // Blocked user UIDs
-  final List<String> blockedBy; // Users who blocked this user
+  final List<String> friends;
+  final List<String> pendingRequests;
+  final List<String> receivedRequests;
+  final List<String> blockedUsers;
+  final List<String> blockedBy;
 
   AppUser({
     required this.uid,
@@ -28,7 +28,7 @@ class AppUser {
       'uid': uid,
       'email': email,
       'name': name,
-      'createdAt': createdAt,
+      'createdAt': Timestamp.fromDate(createdAt),
       'friends': friends,
       'pendingRequests': pendingRequests,
       'receivedRequests': receivedRequests,

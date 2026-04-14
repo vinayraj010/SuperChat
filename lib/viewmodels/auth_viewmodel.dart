@@ -30,7 +30,7 @@ class AuthViewModel extends ChangeNotifier {
       User? user = await _firebaseService.signUp(email, password, name);
       return user != null;
     } catch (e) {
-      _errorMessage = e.toString();
+      _errorMessage = _getErrorMessage(e);
       return false;
     } finally {
       _isLoading = false;
@@ -52,12 +52,32 @@ class AuthViewModel extends ChangeNotifier {
       User? user = await _firebaseService.login(email, password);
       return user != null;
     } catch (e) {
-      _errorMessage = e.toString();
+      _errorMessage = _getErrorMessage(e);
       return false;
     } finally {
       _isLoading = false;
       notifyListeners();
     }
+  }
+
+  String _getErrorMessage(dynamic error) {
+    if (error is FirebaseAuthException) {
+      switch (error.code) {
+        case 'user-not-found':
+          return 'No user found with this email.';
+        case 'wrong-password':
+          return 'Wrong password.';
+        case 'invalid-email':
+          return 'Invalid email format.';
+        case 'email-already-in-use':
+          return 'Email already in use.';
+        case 'weak-password':
+          return 'Password is too weak.';
+        default:
+          return error.message ?? 'Authentication failed.';
+      }
+    }
+    return 'Network error. Please check your connection.';
   }
 
   Future<void> logout() async {

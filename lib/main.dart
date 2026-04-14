@@ -5,17 +5,15 @@ import 'viewmodels/auth_viewmodel.dart';
 import 'viewmodels/user_viewmodel.dart';
 import 'viewmodels/chat_viewmodel.dart';
 import 'views/splash_screen.dart';
+import 'views/home_screen.dart';
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
   await Firebase.initializeApp();
-  print('✅ Firebase initialized successfully');
   runApp(MyApp());
 }
 
 class MyApp extends StatelessWidget {
-  const MyApp({super.key});
-
   @override
   Widget build(BuildContext context) {
     return MultiProvider(
@@ -31,7 +29,11 @@ class MyApp extends StatelessWidget {
           primarySwatch: Colors.blue,
           visualDensity: VisualDensity.adaptivePlatformDensity,
         ),
-        home: SplashScreen(),
+        initialRoute: '/',
+        routes: {
+          '/': (context) => SplashScreen(),
+          '/home': (context) => const HomeScreen(),
+        },
       ),
     );
   }

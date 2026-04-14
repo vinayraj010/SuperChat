@@ -4,7 +4,7 @@ class Message {
   final String id;
   final String chatId;
   final String senderId;
-  final String type; // 'text' or 'audio'
+  final String type;
   final String? text;
   final String? audioUrl;
   final int? audioDuration;
@@ -31,7 +31,7 @@ class Message {
       'text': text,
       'audioUrl': audioUrl,
       'audioDuration': audioDuration,
-      'timestamp': timestamp,
+      'timestamp': Timestamp.fromDate(timestamp),
       'isRead': isRead,
     };
   }
